@@ -8,7 +8,6 @@ function batchInterceptor(instance) {
     handleBatchRequestsWrapper,
     handleBatchRequestsError
   );
-  instance.interceptors.response.use(handleBatchedResults);
 }
 
 const batchUrl = "/file-batch-api";
@@ -31,7 +30,7 @@ function handleBatchRequestsFactory() {
             apiClient
               .get(batchUrl, { params: { ids }, [batchedRequestFlag]: true })
               .then((response) => {
-                resolve(response);
+                resolve(response.data.items);
               })
               .catch((err) => reject(err));
           }, batchInterval);
@@ -79,10 +78,6 @@ function handleBatchRequestsWrapper(config) {
 function handleBatchRequestsError(error) {
   console.log("error", error);
   return Promise.reject(error);
-}
-
-function handleBatchedResults(response) {
-  return response.data.items;
 }
 
 function getUnfetfchedIds(requestIds, fetchedFiles) {
